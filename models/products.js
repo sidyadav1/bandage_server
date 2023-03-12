@@ -29,19 +29,16 @@ const createNewProduct = ({
     });
 };
 
-const getAllProducts = ({ offset }) => {
+const getAllProducts = () => {
     return new Promise((resolve, reject) => {
         db("products")
             .select("*")
-            .offset(parseInt(offset), { skipBinding: true })
-            .limit(15, { skipBinding: true })
             .then((rows) => resolve(rows))
             .catch((error) => reject(error));
     });
 };
 
 const getProductById = ({ id }) => {
-    uuidv4;
     return new Promise((resolve, reject) => {
         db("products")
             .select("*")
@@ -54,4 +51,19 @@ const getProductById = ({ id }) => {
     });
 };
 
-module.exports = { createNewProduct, getAllProducts, getProductById };
+const getProductsById = ({ ids }) => {
+    return new Promise((resolve, reject) => {
+        db("products")
+            .select("*")
+            .whereIn("id", ids)
+            .then((rows) => resolve(rows))
+            .catch((error) => reject(error));
+    });
+};
+
+module.exports = {
+    createNewProduct,
+    getAllProducts,
+    getProductById,
+    getProductsById,
+};
