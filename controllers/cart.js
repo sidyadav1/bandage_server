@@ -3,6 +3,8 @@ const {
     addProductToCart,
     updateProductQuantity,
     removeCartItem,
+    getCartItemByProductId,
+    getCartItemById,
 } = require("../models/cart");
 const { validate } = require("uuid");
 
@@ -37,6 +39,17 @@ const addTocart = async (req, res) => {
                 message: "Product id or quantity invalid",
             });
         }
+        const existingCartItem = await getCartItemByProductId({
+            userId: id,
+            productId,
+        });
+
+        if (existingCartItem) {
+            return res.status(409).json({
+                success: false,
+                message: "Product already in cart",
+            });
+        }
 
         const cartItem = await addProductToCart({
             userId: id,
@@ -63,6 +76,14 @@ const updateQuantity = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: "Product id or quantity invalid",
+            });
+        }
+        const existingCartItem = await getCartItemById({ id });
+
+        if (!existingCartItem) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not in cart",
             });
         }
 

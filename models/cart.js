@@ -65,10 +65,32 @@ const emptyCart = ({ userId }) => {
     });
 };
 
+const getCartItemByProductId = ({ productId, userId }) => {
+    return new Promise((resolve, reject) => {
+        db("cart")
+            .select("*")
+            .where({ userId, productId })
+            .then((rows) => resolve(rows[0]))
+            .catch((error) => reject(error));
+    });
+};
+
+const getCartItemById = ({ id }) => {
+    return new Promise((resolve, reject) => {
+        db("cart")
+            .select("*")
+            .where({ id })
+            .then((rows) => resolve(rows[0]))
+            .catch((error) => reject(error));
+    });
+};
+
 module.exports = {
     getUserCart,
     addProductToCart,
     updateProductQuantity,
     removeCartItem,
     emptyCart,
+    getCartItemByProductId,
+    getCartItemById,
 };
