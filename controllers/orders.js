@@ -1,4 +1,4 @@
-const { emptyCart } = require("../models/cart");
+const { emptyCart, getUserCart } = require("../models/cart");
 const { createNewOrder, getUserOrders } = require("../models/orders");
 const { getProductsById } = require("../models/products");
 
@@ -11,6 +11,30 @@ const newOrder = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: "Products or amount invalid",
+            });
+        }
+        const userCart = await getUserCart({ userId });
+        let containsAllProduct = true;
+        products.every((product) => {
+            let hasProduct = false;
+            userCart.every((cartItem) => {
+                if (cartItem.productId === product.id) {
+                    hasProduct = true;
+                    return false;
+                }
+                return true;
+            });
+            if (!hasProduct) {
+                containsAllProduct = false;
+            }
+            return !containsAllProduct;
+        });
+
+        if (!containsAllProduct) {
+            return res.status(409).json({
+                success: false,
+                message: "Some cart items are missing",
+                data: userCart,
             });
         }
 

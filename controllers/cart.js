@@ -10,8 +10,8 @@ const { validate } = require("uuid");
 
 const userCart = async (req, res) => {
     try {
-        const { id } = req.session;
-        const cart = await getUserCart({ userId: id });
+        const { id: userId } = req.session;
+        const cart = await getUserCart({ userId });
         return res.status(200).json({
             success: true,
             data: cart,
@@ -26,7 +26,7 @@ const userCart = async (req, res) => {
 
 const addTocart = async (req, res) => {
     try {
-        const { id } = req.session;
+        const { id: userId } = req.session;
         const { productId, quantity } = req.body;
         if (
             !productId ||
@@ -40,7 +40,7 @@ const addTocart = async (req, res) => {
             });
         }
         const existingCartItem = await getCartItemByProductId({
-            userId: id,
+            userId,
             productId,
         });
 
@@ -52,7 +52,7 @@ const addTocart = async (req, res) => {
         }
 
         const cartItem = await addProductToCart({
-            userId: id,
+            userId,
             productId,
             quantity,
         });
